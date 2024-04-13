@@ -1095,8 +1095,19 @@ int main() {
 
         // once in a while do model inference to print generated text
         if (step > 0 && step % 20 == 0) {
-            gen_tokens[0] = GPT2_EOT; // the GPT-2 EOT token kicks off the generation
-            for (int t = 1; t < gen_max_length; t++) {
+            //① 替换的一行开头内容
+            //gen_tokens[0] = GPT2_EOT; // the GPT-2 EOT token kicks off the generation
+
+            //① 替换为自定义的开头
+            // 将自定义的前文token ID序列复制到gen_tokens
+            int custom_prompt[] = {40, 1842, 12734}; //I love flowers
+            int custom_prompt_len = sizeof(custom_prompt) / sizeof(custom_prompt[0]);
+            memcpy(gen_tokens, custom_prompt, custom_prompt_len * sizeof(int));
+
+            // 替换后的开头内容引导生成
+            //② for (int t = 1; t < gen_max_length; t++) {
+            //② 从custom_prompt_len开始生成
+            for (int t = custom_prompt_len; t < gen_max_length; t++) {
                 // note that inference is wasteful here because
                 // for each t, we re-compute all activations between 0 and t
                 // leaving this alone because you want separate code for inference anyway
